@@ -1,0 +1,113 @@
+digraph EcommerceSystem {
+    rankdir=TB;
+    fontname="Segoe UI";
+    node [fontname="Segoe UI", fontsize=11];
+    edge [fontname="Segoe UI", fontsize=10];
+
+    label="ecommerce-system (com.example)";
+    labelloc=t;
+
+    subgraph cluster_modules {
+        label="Maven modules";
+        style=rounded;
+        color="#4A5568";
+
+        root [label="ecommerce-system", shape=folder, style=filled, fillcolor="#EDF2F7"];
+        common [label="common", shape=folder, style=filled, fillcolor="#BEE3F8"];
+        common_domain [label="common-domain", shape=box, style=filled, fillcolor="#90CDF4"];
+        common_starter [label="common-starter", shape=box, style=filled, fillcolor="#BEE3F8"];
+        common_restapi [label="common-restapi", shape=box, style=filled, fillcolor="#BEE3F8"];
+
+        order_service [label="order-service", shape=folder, style=filled, fillcolor="#C6F6D5"];
+        order_domain [label="order-service-domain", shape=folder, style=filled, fillcolor="#9AE6B4"];
+        order_core [label="order-domain-core", shape=box, style=filled, fillcolor="#68D391"];
+        order_app [label="order-application-service", shape=box, style=filled, fillcolor="#9AE6B4"];
+        order_persistence [label="order-service-persistence", shape=box, style=filled, fillcolor="#C6F6D5"];
+        order_restapi [label="order-service-restapi", shape=box, style=filled, fillcolor="#C6F6D5"];
+        order_messaging [label="order-service-messaging", shape=box, style=filled, fillcolor="#C6F6D5"];
+        order_main [label="order-service-main", shape=box, style=filled, fillcolor="#C6F6D5"];
+
+        root -> common;
+        root -> order_service;
+        common -> common_starter;
+        common -> common_domain;
+        common -> common_restapi;
+        order_service -> order_domain;
+        order_service -> order_persistence;
+        order_service -> order_restapi;
+        order_service -> order_messaging;
+        order_service -> order_main;
+        order_domain -> order_core;
+        order_domain -> order_app;
+        order_core -> common_domain [label="depends on", style=dashed];
+        order_app -> order_core [label="depends on", style=dashed];
+    }
+
+    subgraph cluster_domain {
+        label="order-domain-core  |  packages: com.example.entity / valueobject / event";
+        style=rounded;
+        color="#2B6CB0";
+
+        subgraph cluster_entities {
+            label="Entities";
+            style=rounded;
+            color="#2C7A7B";
+
+            AggregateRoot [shape=box, style="filled,rounded", fillcolor="#E6FFFA"];
+            BaseEntity [shape=box, style="filled,rounded", fillcolor="#E6FFFA"];
+            Order [shape=box, style="filled,rounded", fillcolor="#81E6D9"];
+            OrderItem [shape=box, style="filled,rounded", fillcolor="#B2F5EA"];
+            Product [shape=box, style="filled,rounded", fillcolor="#B2F5EA"];
+
+            AggregateRoot -> BaseEntity [label="extends"];
+            Order -> AggregateRoot [label="extends <OrderId>"];
+            OrderItem -> BaseEntity [label="extends <OrderItemId>"];
+            Product -> BaseEntity [label="extends <ProductId>"];
+            Order -> OrderItem [label="items: List<OrderItem>"];
+        }
+
+        subgraph cluster_values {
+            label="Value objects";
+            style=rounded;
+            color="#6B46C1";
+
+            OrderId [shape=ellipse, style=filled, fillcolor="#E9D8FD"];
+            CustomerId [shape=ellipse, style=filled, fillcolor="#E9D8FD"];
+            BusinessId [shape=ellipse, style=filled, fillcolor="#E9D8FD"];
+            StreetAddress [shape=ellipse, style=filled, fillcolor="#E9D8FD"];
+            Money [shape=ellipse, style=filled, fillcolor="#E9D8FD"];
+            TrackingId [shape=ellipse, style=filled, fillcolor="#E9D8FD"];
+            OrderStatus [shape=ellipse, style=filled, fillcolor="#D6BCFA"];
+            OrderItemId [shape=ellipse, style=filled, fillcolor="#E9D8FD"];
+            ProductId [shape=ellipse, style=filled, fillcolor="#E9D8FD"];
+        }
+
+        subgraph cluster_events {
+            label="Events";
+            style=rounded;
+            color="#C05621";
+
+            DomainEvent [shape=box, style="filled,rounded", fillcolor="#FEEBC8"];
+            OrderEvent [shape=box, style="filled,rounded", fillcolor="#FBD38D"];
+            OrderCreatedEvent [shape=box, style="filled,rounded", fillcolor="#F6AD55"];
+            OrderPaidEvent [shape=box, style="filled,rounded", fillcolor="#F6AD55"];
+            OrderCancelledEvent [shape=box, style="filled,rounded", fillcolor="#F6AD55"];
+
+            OrderEvent -> DomainEvent [label="implements <Order>"];
+            OrderCreatedEvent -> OrderEvent [label="extends"];
+            OrderPaidEvent -> OrderEvent [label="extends"];
+            OrderCancelledEvent -> OrderEvent [label="extends"];
+        }
+
+        Order -> CustomerId [label="customerId"];
+        Order -> BusinessId [label="businessId"];
+        Order -> StreetAddress [label="deliveryAddress"];
+        Order -> Money [label="price"];
+        Order -> TrackingId [label="trackingId"];
+        Order -> OrderStatus [label="orderStatus"];
+        Order -> OrderId [label="id"];
+        OrderItem -> OrderItemId [label="id"];
+        Product -> ProductId [label="id"];
+        OrderEvent -> Order [label="order"];
+    }
+}
