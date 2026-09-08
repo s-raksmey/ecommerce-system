@@ -7,6 +7,14 @@ public record Money(
         // ទឹកលុយ
         BigDecimal amount
 ) {
+    public static final Money ZERO = new Money(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN));
+
+    public Money {
+        if (amount != null) {
+            amount = amount.setScale(2, RoundingMode.HALF_EVEN);
+        }
+    }
+
     // ផ្ទៀងផ្ទាត់ទឹកលុយធំជាងសូន្យ
     public boolean isGreaterThanZero() {
         return amount.compareTo(BigDecimal.ZERO) > 0;
