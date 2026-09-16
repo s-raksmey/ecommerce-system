@@ -14,7 +14,8 @@
     <dependencies>
         <dependency>
             <groupId>com.example</groupId>
-            <artifactId>order-application-service</artifactId>
+            <artifactId>order-service-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
