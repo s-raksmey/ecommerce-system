@@ -6,32 +6,34 @@ import com.example.valueobject.OrderItemId;
 
 public class OrderItem extends BaseEntity<OrderItemId> {
     private OrderId orderId;
+
     private final Product product;
-    private final int quantity;
+
+    private final Integer quantity;
+
     private final Money price;
+
     private final Money subTotal;
 
-    private OrderItem(Builder builder) {
-        super.setId(builder.orderItemId);
-        product = builder.product;
-        quantity = builder.quantity;
-        price = builder.price;
-        subTotal = builder.subTotal;
+
+    // ============ Critical Business Logic ============ //
+    // តើតម្លៃត្រឹមត្រូវដែរឬទេ?
+    boolean isPriceValid() {
+        return price.isGreaterThanZero() &&
+                price.equals(product.getPrice()) &&
+                price.multiply(quantity).equals(subTotal);
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    void initializeOrderItem(OrderId orderId, OrderItemId orderItemId) {
+    public void initializeOrderItem(OrderId orderId, OrderItemId orderItemId) {
         this.orderId = orderId;
         super.setId(orderItemId);
     }
 
-    boolean isPriceValid() {
-        return price.isGreaterThanZero() &&
-                price.multiply(quantity).equals(subTotal);
-    }
+
+
+
+
+
 
     public OrderId getOrderId() {
         return orderId;
@@ -41,7 +43,7 @@ public class OrderItem extends BaseEntity<OrderItemId> {
         return product;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
@@ -53,18 +55,40 @@ public class OrderItem extends BaseEntity<OrderItemId> {
         return subTotal;
     }
 
+    private OrderItem(Builder builder) {
+        super.setId(builder.id);
+        orderId = builder.orderId;
+        product = builder.product;
+        quantity = builder.quantity;
+        price = builder.price;
+        subTotal = builder.subTotal;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+
+
+
     public static final class Builder {
-        private OrderItemId orderItemId;
+        private OrderItemId id;
+        private OrderId orderId;
         private Product product;
-        private int quantity;
+        private Integer quantity;
         private Money price;
         private Money subTotal;
 
         private Builder() {
         }
 
-        public Builder orderItemId(OrderItemId val) {
-            orderItemId = val;
+        public Builder id(OrderItemId val) {
+            id = val;
+            return this;
+        }
+
+        public Builder orderId(OrderId val) {
+            orderId = val;
             return this;
         }
 
@@ -73,7 +97,7 @@ public class OrderItem extends BaseEntity<OrderItemId> {
             return this;
         }
 
-        public Builder quantity(int val) {
+        public Builder quantity(Integer val) {
             quantity = val;
             return this;
         }

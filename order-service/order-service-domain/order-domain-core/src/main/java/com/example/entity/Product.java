@@ -4,23 +4,8 @@ import com.example.valueobject.Money;
 import com.example.valueobject.ProductId;
 
 public class Product extends BaseEntity<ProductId> {
-    private String name;
-    private Money price;
-
-    public Product(ProductId productId, String name, Money price) {
-        super.setId(productId);
-        this.name = name;
-        this.price = price;
-    }
-
-    public Product(ProductId productId) {
-        super.setId(productId);
-    }
-
-    public void updateWithConfirmedNameAndPrice(String name, Money price) {
-        this.name = name;
-        this.price = price;
-    }
+    private final String name;
+    private final Money price;
 
     public String getName() {
         return name;
@@ -28,5 +13,44 @@ public class Product extends BaseEntity<ProductId> {
 
     public Money getPrice() {
         return price;
+    }
+
+    private Product(Builder builder) {
+        super.setId(builder.id);
+        name = builder.name;
+        price = builder.price;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+
+    public static final class Builder {
+        private ProductId id;
+        private String name;
+        private Money price;
+
+        private Builder() {
+        }
+
+        public Builder id(ProductId val) {
+            id = val;
+            return this;
+        }
+
+        public Builder name(String val) {
+            name = val;
+            return this;
+        }
+
+        public Builder price(Money val) {
+            price = val;
+            return this;
+        }
+
+        public Product build() {
+            return new Product(this);
+        }
     }
 }

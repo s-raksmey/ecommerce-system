@@ -1,5 +1,6 @@
 package com.example.entity;
 
+
 import com.example.exception.OrderDomainException;
 import com.example.valueobject.*;
 
@@ -7,17 +8,28 @@ import java.util.List;
 import java.util.UUID;
 
 public class Order extends AggregateRoot<OrderId> {
-    public static final String FAILURE_MESSAGE_DELIMITER = ",";
-
     private final CustomerId customerId;
+
     private final BusinessId businessId;
+
     private final StreetAddress deliveryAddress;
+
     private final Money price;
+
     private final List<OrderItem> items;
 
     private TrackingId trackingId;
     private OrderStatus orderStatus;
     private List<String> failureMessages;
+
+
+    // ========== start critical business logic ============= //
+    public void validateOrder() {
+        validateInitialOrder();
+        validateTotalPrice();
+        validateItemsPrice();
+    }
+
 
     public void initializeOrder() {
         setId(new OrderId(UUID.randomUUID()));
@@ -26,92 +38,106 @@ public class Order extends AggregateRoot<OrderId> {
         initializeOrderItems();
     }
 
-    public void validateOrder() {
-        validateInitialOrder();
-        validateTotalPrice();
-        validateItemsPrice();
-    }
 
     public void pay() {
         if (orderStatus != OrderStatus.PENDING) {
-            throw new OrderDomainException("Order is not in correct state for pay operation!");
+            throw new OrderDomainException("Order is not in correct state for pay operation");
         }
         orderStatus = OrderStatus.PAID;
     }
 
+
     public void approve() {
         if (orderStatus != OrderStatus.PAID) {
-            throw new OrderDomainException("Order is not in correct state for approve operation!");
+            throw new OrderDomainException("Order is not in correct state for approve operation");
         }
         orderStatus = OrderStatus.APPROVED;
     }
 
-    public void initCancel(List<String> failureMessages) {
+
+    public void initCancel() {
         if (orderStatus != OrderStatus.PAID) {
-            throw new OrderDomainException("Order is not in correct state for initCancel operation!");
+            throw new OrderDomainException("Order is not in correct state for init cancel operation");
         }
         orderStatus = OrderStatus.CANCELLING;
         updateFailureMessages(failureMessages);
     }
 
-    public void cancel(List<String> failureMessages) {
+
+    public void cancel() {
         if (!(orderStatus == OrderStatus.CANCELLING || orderStatus == OrderStatus.PENDING)) {
-            throw new OrderDomainException("Order is not in correct state for cancel operation!");
+            throw new OrderDomainException("Order is not in correct state for cancel operation");
         }
         orderStatus = OrderStatus.CANCELLED;
         updateFailureMessages(failureMessages);
     }
 
-    private void validateInitialOrder() {
-        if (orderStatus != null || getId() != null) {
-            throw new OrderDomainException("Order is not in correct state for initialization!");
+
+    private void updateFailureMessages(List<String> failureMessages) {
+        if (failureMessages != null && this.failureMessages != null) {
+            this.failureMessages.addAll(
+                    failureMessages.stream().filter(message -> !message.isBlank()).toList()
+            );
+        }
+
+        if (this.failureMessages == null) {
+            this.failureMessages = failureMessages;
         }
     }
+
+
+    private void validateInitialOrder() {
+        if (orderStatus != null || super.getId() != null) {
+            throw new OrderDomainException("Order is not in correct status for initialization");
+        }
+    }
+
 
     private void validateTotalPrice() {
         if (price == null || !price.isGreaterThanZero()) {
-            throw new OrderDomainException("Total price must be greater than zero!");
+            throw new OrderDomainException("Total price must be greater than zero");
         }
     }
 
+
     private void validateItemsPrice() {
-        Money orderItemsTotal = items.stream()
+        Money orderItemsTotalPrice = items.stream()
                 .map(orderItem -> {
                     validateItemPrice(orderItem);
                     return orderItem.getSubTotal();
                 })
                 .reduce(Money.ZERO, Money::add);
 
-        if (!price.equals(orderItemsTotal)) {
+        if (!price.equals(orderItemsTotalPrice)) {
             throw new OrderDomainException("Total price: " + price.amount()
-                    + " is not equal to Order items total: " + orderItemsTotal.amount() + "!");
+                    + " is not equal to order items total price: " + orderItemsTotalPrice.amount());
         }
     }
 
+
+    /**
+     * ផ្ទៀងផ្ទាត់តម្លៃ item
+     * @param orderItem នៃការបញ្ជាទិញ
+     * @author Num Somrithy ()
+     */
     private void validateItemPrice(OrderItem orderItem) {
         if (!orderItem.isPriceValid()) {
-            throw new OrderDomainException("Order item price: " + orderItem.getPrice().amount()
-                    + " is not valid for product " + orderItem.getProduct().getId().value());
+            throw new OrderDomainException("Order item price: " + orderItem.getPrice().amount() +
+                    " is not valid for product: " + orderItem.getProduct().getId().value());
         }
     }
+
 
     private void initializeOrderItems() {
-        int itemId = 1;
-        for (OrderItem orderItem : items) {
-            orderItem.initializeOrderItem(super.getId(), new OrderItemId(itemId++));
+        int itemCount = 1;
+        for (OrderItem item : items) {
+            item.initializeOrderItem(super.getId(), new OrderItemId(itemCount++));
         }
     }
 
-    private void updateFailureMessages(List<String> failureMessages) {
-        if (this.failureMessages != null && failureMessages != null) {
-            this.failureMessages.addAll(failureMessages.stream()
-                    .filter(message -> !message.isEmpty())
-                    .toList());
-        }
-        if (this.failureMessages == null) {
-            this.failureMessages = failureMessages;
-        }
-    }
+    // ========== end critical business logic ============= //
+
+
 
     public CustomerId getCustomerId() {
         return customerId;
@@ -160,6 +186,7 @@ public class Order extends AggregateRoot<OrderId> {
     public static Builder builder() {
         return new Builder();
     }
+
 
     public static final class Builder {
         private OrderId id;

@@ -7,13 +7,8 @@ public record Money(
         // ទឹកលុយ
         BigDecimal amount
 ) {
-    public static final Money ZERO = new Money(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN));
 
-    public Money {
-        if (amount != null) {
-            amount = amount.setScale(2, RoundingMode.HALF_EVEN);
-        }
-    }
+    public static final Money ZERO = new Money(BigDecimal.ZERO);
 
     // ផ្ទៀងផ្ទាត់ទឹកលុយធំជាងសូន្យ
     public boolean isGreaterThanZero() {

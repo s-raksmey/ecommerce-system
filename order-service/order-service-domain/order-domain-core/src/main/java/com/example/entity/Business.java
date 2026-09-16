@@ -6,7 +6,15 @@ import java.util.List;
 
 public class Business extends AggregateRoot<BusinessId> {
     private final List<Product> products;
-    private boolean active;
+    private final boolean active;
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
 
     private Business(Builder builder) {
         super.setId(builder.id);
@@ -18,13 +26,6 @@ public class Business extends AggregateRoot<BusinessId> {
         return new Builder();
     }
 
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
 
     public static final class Builder {
         private BusinessId id;
