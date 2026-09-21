@@ -10,11 +10,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-// JPA Entity must be POJO (Plain Old Java Object) class
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity // Create table name = order
+@Entity
 @Table(name = "orders")
 public class OrderEntity {
     @Id
@@ -37,6 +36,6 @@ public class OrderEntity {
 
     private OrderStatus orderStatus;
 
-    private String failureMessages; // message1;message2
+    private String failureMessages;
 
 }
