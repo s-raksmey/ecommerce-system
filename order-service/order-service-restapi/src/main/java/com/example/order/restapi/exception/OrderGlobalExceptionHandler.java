@@ -1,7 +1,7 @@
 package com.example.order.restapi.exception;
 
-import com.example.exception.DomainException;
 import com.example.order.domain.exception.OrderDomainException;
+import com.example.persistence.business.exception.BusinessPersistenceException;
 import com.example.restapi.dto.FieldErrorResponse;
 import com.example.restapi.dto.RestApiErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -33,17 +33,24 @@ public class OrderGlobalExceptionHandler {
         return RestApiErrorResponse.builder()
                 .code(HttpStatus.BAD_REQUEST.getReasonPhrase())
                 .message("Invalid request body. Check JSON format and field types (UUID, number, object).")
-                .detail(null)
                 .build();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({OrderDomainException.class, DomainException.class})
-    public RestApiErrorResponse<?> handleDomainException(RuntimeException exception) {
+    @ExceptionHandler(OrderDomainException.class)
+    public RestApiErrorResponse<?> handleOrderDomainException(OrderDomainException exception) {
         return RestApiErrorResponse.builder()
                 .code(HttpStatus.BAD_REQUEST.getReasonPhrase())
                 .message(exception.getMessage())
-                .detail(null)
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BusinessPersistenceException.class)
+    public RestApiErrorResponse<?> handleBusinessPersistenceException(BusinessPersistenceException exception) {
+        return RestApiErrorResponse.builder()
+                .code(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .message(exception.getMessage())
                 .build();
     }
 
@@ -57,7 +64,6 @@ public class OrderGlobalExceptionHandler {
         return RestApiErrorResponse.builder()
                 .code(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
                 .message(root.getMessage() != null ? root.getMessage() : exception.getMessage())
-                .detail(null)
                 .build();
     }
 

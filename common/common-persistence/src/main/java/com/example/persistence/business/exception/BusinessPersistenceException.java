@@ -1,4 +1,4 @@
-package com.example.order.persistence.exception;
+package com.example.persistence.business.exception;
 
 public class BusinessPersistenceException extends RuntimeException {
 

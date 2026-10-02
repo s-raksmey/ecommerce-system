@@ -2,10 +2,19 @@ package com.example.valueobject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Objects;
 
-public record Money(
-        BigDecimal amount
-) {
+public class Money {
+
+    private final BigDecimal amount;
+
+    public Money(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
     public static final Money ZERO = new Money(BigDecimal.ZERO);
 
@@ -29,23 +38,21 @@ public record Money(
         return new Money(setScale(this.amount.multiply(BigDecimal.valueOf(multiplier))));
     }
 
+    private BigDecimal setScale(BigDecimal inputAmount) {
+        return inputAmount.setScale(2, RoundingMode.HALF_EVEN);
+    }
+
     @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (!(object instanceof Money money)) {
+    public boolean equals(Object o) {
+        if (!(o instanceof Money money)) {
             return false;
         }
-        return amount.compareTo(money.amount) == 0;
+        return Objects.equals(setScale(amount), setScale(money.amount));
     }
 
     @Override
     public int hashCode() {
-        return amount.stripTrailingZeros().hashCode();
+        return Objects.hashCode(setScale(amount));
     }
 
-    private BigDecimal setScale(BigDecimal inputAmount) {
-        return inputAmount.setScale(2, RoundingMode.HALF_EVEN);
-    }
 }

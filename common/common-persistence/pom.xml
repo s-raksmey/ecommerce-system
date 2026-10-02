@@ -5,17 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.example</groupId>
-        <artifactId>ecommerce-system</artifactId>
+        <artifactId>common</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>common</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>common-starter</module>
-        <module>common-domain</module>
-        <module>common-restapi</module>
-        <module>common-persistence</module>
-    </modules>
+    <artifactId>common-persistence</artifactId>
 
 </project>

@@ -3,7 +3,7 @@ package com.example.order.persistence.mapper;
 import com.example.order.domain.entity.Business;
 import com.example.order.domain.entity.Product;
 import com.example.order.persistence.entity.BusinessEntity;
-import com.example.order.persistence.exception.BusinessPersistenceException;
+import com.example.persistence.business.exception.BusinessPersistenceException;
 import com.example.valueobject.BusinessId;
 import com.example.valueobject.Money;
 import com.example.valueobject.ProductId;

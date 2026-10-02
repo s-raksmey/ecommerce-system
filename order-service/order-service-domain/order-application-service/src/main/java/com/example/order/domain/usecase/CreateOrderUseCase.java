@@ -45,7 +45,6 @@ public class CreateOrderUseCase {
         List<Product> products = createOrderCommand.items().stream()
                 .map(commandOrderItem -> Product.builder()
                         .id(new ProductId(commandOrderItem.productId()))
-                        .name("product")
                         .price(new Money(commandOrderItem.price()))
                         .build())
                 .toList();
@@ -60,13 +59,16 @@ public class CreateOrderUseCase {
                         "Could not find business with ID: " + createOrderCommand.businessId()
                 ));
 
-        Order order = orderDomainMapper.createOrderCommandToOrder(createOrderCommand);
-        OrderCreatedEvent orderCreatedEvent = orderDomainService.validateAndInitiateOrder(order, business);
-        log.info("Order created event: {}", orderCreatedEvent);
+        log.info("Found business: {}", business);
 
-        Order savedOrder = orderRepository.saveOrder(orderCreatedEvent.getOrder());
+        Order order = orderDomainMapper.createOrderCommandToOrder(createOrderCommand);
+        log.info("Order price: {}", order.getPrice().getAmount());
+        OrderCreatedEvent orderCreatedEvent = orderDomainService.validateAndInitiateOrder(order, business);
+        log.info("Order created event: {}", orderCreatedEvent.getOrder().getId());
+
+        Order savedOrder = orderRepository.saveOrder(order);
         if (savedOrder == null) {
-            throw new OrderDomainException("Could not save order");
+            throw new OrderDomainException("Could not save order into database");
         }
 
         return new CreateOrderResult(savedOrder.getId().value());
