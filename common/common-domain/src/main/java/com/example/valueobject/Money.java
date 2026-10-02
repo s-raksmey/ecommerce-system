@@ -29,6 +29,22 @@ public record Money(
         return new Money(setScale(this.amount.multiply(BigDecimal.valueOf(multiplier))));
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof Money money)) {
+            return false;
+        }
+        return amount.compareTo(money.amount) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return amount.stripTrailingZeros().hashCode();
+    }
+
     private BigDecimal setScale(BigDecimal inputAmount) {
         return inputAmount.setScale(2, RoundingMode.HALF_EVEN);
     }

@@ -7,8 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.UUID;
 
-public interface BusinessJpaRepository extends JpaRepository<BusinessEntity, UUID> {
+public interface BusinessJpaRepository extends JpaRepository<BusinessEntity, BusinessIdEntity> {
 
-    List<BusinessEntity> findByBusinessId(UUID businessId);
+    List<BusinessEntity> findByBusinessIdAndProductIdIn(
+            UUID businessId,
+            List<UUID> productIds
+    );
 
 }

@@ -1,6 +1,5 @@
 package com.example.order.restapi.dto;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -8,7 +7,7 @@ import lombok.Builder;
 @Builder
 public record OrderAddressRequest(
         @NotNull
-        @Size(max = 20)
+        @Size(max = 50)
         String street,
         @NotNull
         @Size(max = 10)

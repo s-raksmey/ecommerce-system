@@ -1,5 +1,7 @@
 package com.example.order.restapi.dto;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
@@ -14,8 +16,11 @@ public record OrderCreateRequest(
         @NotNull
         UUID businessId,
         @NotNull
+        @Valid
         OrderAddressRequest orderAddress,
         @NotNull
+        @NotEmpty
+        @Valid
         List<OrderItemRequest> items,
         @NotNull
         BigDecimal price
