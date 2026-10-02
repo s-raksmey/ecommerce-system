@@ -25,7 +25,8 @@ public class OrderItemEntity {
     private BigDecimal price;
     private BigDecimal subTotal;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "order_id")
     private OrderEntity order;
 
 }
