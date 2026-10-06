@@ -22,6 +22,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Application service for the create-order use case.
+ * <p>
+ * The REST adapter calls {@link #execute(CreateOrderCommand)}. This class talks to
+ * the domain through {@link OrderDomainService} and to infrastructure only through
+ * output ports ({@link CustomerRepository}, {@link BusinessRepository}, {@link OrderRepository}).
+ * It does not know about HTTP or JPA.
+ * <p>
+ * Flow: confirm the customer, load the business and its products, map the command
+ * to an {@link Order}, validate and initiate that order, then save it.
+ */
 @Component
 @Slf4j
 @RequiredArgsConstructor

@@ -14,6 +14,10 @@ import java.util.List;
 
 public class OrderDomainServiceImpl implements OrderDomainService {
 
+    /**
+     * Create-order rule: the catalog product replaces the name and price sent by the client
+     * when the product ids match. The order total is then checked against those confirmed prices.
+     */
     @Override
     public OrderCreatedEvent validateAndInitiateOrder(Order order, Business business) {
         if (!business.isActive()) {

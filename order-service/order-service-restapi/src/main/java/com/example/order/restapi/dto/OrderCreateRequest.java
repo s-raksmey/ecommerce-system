@@ -9,6 +9,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * HTTP body for POST /api/v1/orders. Validation stays at the adapter.
+ * {@link com.example.order.restapi.mapper.OrderWebMapper} converts this into the use-case command.
+ */
 @Builder
 public record OrderCreateRequest(
         @NotNull

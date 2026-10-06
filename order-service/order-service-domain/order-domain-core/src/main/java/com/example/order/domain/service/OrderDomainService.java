@@ -9,6 +9,10 @@ import com.example.order.domain.event.OrderPaidEvent;
 import java.util.List;
 
 public interface OrderDomainService {
+    /**
+     * Create-order domain step. Rejects an inactive business, confirms each item
+     * against the business catalog, then validates and initializes the order.
+     */
     OrderCreatedEvent validateAndInitiateOrder(Order order, Business business);
 
     OrderPaidEvent payOrder(Order order);

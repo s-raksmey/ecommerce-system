@@ -7,6 +7,10 @@ import com.example.order.restapi.dto.OrderCreateResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * Boundary mapper for the create-order driving adapter.
+ * Request DTO to {@link CreateOrderCommand}, and {@link CreateOrderResult} to the response DTO.
+ */
 @Mapper(componentModel = "spring")
 public interface OrderWebMapper {
 

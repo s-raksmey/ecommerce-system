@@ -12,6 +12,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Driven adapter for {@link BusinessRepository}.
+ * Loads the business products requested by the create-order use case and maps them
+ * back to the domain {@link Business}.
+ */
 @Repository
 @RequiredArgsConstructor
 public class BusinessRepositoryAdapter implements BusinessRepository {

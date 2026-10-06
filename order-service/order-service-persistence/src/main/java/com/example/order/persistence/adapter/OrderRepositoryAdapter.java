@@ -8,6 +8,10 @@ import com.example.order.persistence.repository.OrderJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Driven adapter for {@link OrderRepository}.
+ * Translates the domain {@link Order} to JPA entities and back. The use case never sees these entities.
+ */
 @Repository
 @RequiredArgsConstructor
 public class OrderRepositoryAdapter implements OrderRepository {

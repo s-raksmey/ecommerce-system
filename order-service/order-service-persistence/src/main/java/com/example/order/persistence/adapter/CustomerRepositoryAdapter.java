@@ -10,6 +10,10 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Driven adapter for {@link CustomerRepository}.
+ * Loads a customer row and maps it to the domain {@link Customer} for the create-order check.
+ */
 @Repository
 @RequiredArgsConstructor
 public class CustomerRepositoryAdapter implements CustomerRepository {

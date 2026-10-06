@@ -11,6 +11,10 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
+/**
+ * Maps {@link CreateOrderCommand} into the {@link Order} aggregate before domain validation.
+ * Identifiers and status are left unset here; {@code Order.initializeOrder()} assigns them.
+ */
 @Mapper(componentModel = "spring")
 public interface OrderDomainMapper {
 
