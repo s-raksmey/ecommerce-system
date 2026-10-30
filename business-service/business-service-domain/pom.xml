@@ -11,9 +11,9 @@
 
     <artifactId>business-service-domain</artifactId>
     <packaging>pom</packaging>
+
     <modules>
         <module>business-domain-core</module>
         <module>business-application-service</module>
     </modules>
-
 </project>

@@ -1,35 +1,41 @@
 package com.example.order;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-
 @RestController
 @RequestMapping("/nacos/config")
-@RefreshScope
+@RequiredArgsConstructor
 public class NacosConfigController {
 
-    @Value("${service.name}")
-    private String serviceName;
-
-    @Value("${service.info}")
-    private String serviceInfo;
-
-    @Value("${service.version}")
-    private String serviceVersion;
+   private final NacosConfigProps nacosConfigProps;
 
     @GetMapping
-    public Map<String, Object> getConfig(){
-       return Map.of(
-               "serviceName", serviceName,
-               "serviceInfo", serviceInfo,
-               "serviceVersion", serviceVersion
-       );
+    public Map<String, Object> getConfig() {
+        return Map.of(
+                "serviceName", nacosConfigProps.getName(),
+                "serviceBasicInfo", nacosConfigProps.getBasicInfo(),
+                "serviceVersion", nacosConfigProps.getVersion()
+        );
+    }
+
+    @GetMapping("/secured")
+    public Map<String, Object> getSecuredConfig(@AuthenticationPrincipal Jwt jwt) {
+        System.out.println("getSecuredConfig: " + jwt.getTokenValue());
+        return Map.of(
+                "serviceName", nacosConfigProps.getName(),
+                "serviceBasicInfo", nacosConfigProps.getBasicInfo(),
+                "serviceVersion", nacosConfigProps.getVersion(),
+                "accessToken", jwt.getTokenValue()
+        );
     }
 
 }

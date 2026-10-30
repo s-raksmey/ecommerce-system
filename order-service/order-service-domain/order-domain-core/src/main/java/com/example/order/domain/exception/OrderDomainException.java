@@ -1,6 +1,6 @@
 package com.example.order.domain.exception;
 
-import com.example.exception.DomainException;
+import com.example.domain.exception.DomainException;
 
 public class OrderDomainException extends DomainException {
 

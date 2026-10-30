@@ -17,6 +17,7 @@ public class OrderRepositoryAdapter implements OrderRepository {
 
     @Override
     public Order saveOrder(Order order) {
+
         OrderEntity orderEntity = orderPersistenceMapper.orderToOrderEntity(order);
 
         orderEntity.getOrderAddress().setOrder(orderEntity);
@@ -24,6 +25,7 @@ public class OrderRepositoryAdapter implements OrderRepository {
                 .forEach(orderItemEntity -> orderItemEntity.setOrder(orderEntity));
 
         OrderEntity savedOrderEntity = orderJpaRepository.save(orderEntity);
+
         return orderPersistenceMapper.orderEntityToOrder(savedOrderEntity);
     }
 

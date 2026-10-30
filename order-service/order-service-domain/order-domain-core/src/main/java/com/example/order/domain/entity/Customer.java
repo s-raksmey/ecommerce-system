@@ -1,7 +1,7 @@
 package com.example.order.domain.entity;
 
-import com.example.entity.AggregateRoot;
-import com.example.valueobject.CustomerId;
+import com.example.domain.entity.AggregateRoot;
+import com.example.domain.valueobject.CustomerId;
 
 public class Customer extends AggregateRoot<CustomerId> {
     private final String username;
@@ -30,7 +30,6 @@ public class Customer extends AggregateRoot<CustomerId> {
     public String getGivenName() {
         return givenName;
     }
-
 
     public static final class Builder {
         private CustomerId id;

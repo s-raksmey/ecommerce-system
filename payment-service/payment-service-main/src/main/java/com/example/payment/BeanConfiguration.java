@@ -1,7 +1,7 @@
 package com.example.payment;
 
-import com.example.payment.domain.service.PaymentDomainService;
-import com.example.payment.domain.service.PaymentDomainServiceImpl;
+import com.example.payment.domain.PaymentDomainService;
+import com.example.payment.domain.PaymentDomainServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,5 +12,4 @@ public class BeanConfiguration {
     public PaymentDomainService paymentDomainService() {
         return new PaymentDomainServiceImpl();
     }
-
 }

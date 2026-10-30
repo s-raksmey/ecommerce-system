@@ -3,6 +3,7 @@ package com.example.order.persistence.adapter;
 import com.example.order.domain.entity.Customer;
 import com.example.order.domain.port.ouput.CustomerRepository;
 import com.example.order.persistence.mapper.CustomerPersistenceMapper;
+import com.example.order.persistence.mapper.OrderPersistenceMapper;
 import com.example.order.persistence.repository.CustomerJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

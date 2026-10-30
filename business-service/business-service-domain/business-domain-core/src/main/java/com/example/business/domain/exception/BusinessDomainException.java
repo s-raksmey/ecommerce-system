@@ -1,8 +1,9 @@
 package com.example.business.domain.exception;
 
-import com.example.exception.DomainException;
+import com.example.domain.exception.DomainException;
 
 public class BusinessDomainException extends DomainException {
+
     public BusinessDomainException(String message, Throwable cause) {
         super(message, cause);
     }

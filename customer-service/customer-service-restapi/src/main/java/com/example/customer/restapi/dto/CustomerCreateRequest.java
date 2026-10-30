@@ -1,5 +1,6 @@
 package com.example.customer.restapi.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
@@ -7,9 +8,11 @@ import lombok.Builder;
 public record CustomerCreateRequest(
         @NotBlank
         String username,
-        @NotBlank
         String familyName,
+        String givenName,
         @NotBlank
-        String givenName
+        @Email
+        String email,
+        String phoneNumber
 ) {
 }

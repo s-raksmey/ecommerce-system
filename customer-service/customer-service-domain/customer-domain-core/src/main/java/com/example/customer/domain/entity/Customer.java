@@ -1,32 +1,20 @@
 package com.example.customer.domain.entity;
 
 import com.example.customer.domain.exception.CustomerDomainException;
-import com.example.entity.AggregateRoot;
-import com.example.valueobject.CustomerId;
+import com.example.domain.entity.AggregateRoot;
+import com.example.domain.valueobject.*;
 
 import java.util.UUID;
 
 public class Customer extends AggregateRoot<CustomerId> {
+
     private final String username;
-    private final String familyName;
-    private final String givenName;
-
-    private Customer(Builder builder) {
-        setId(builder.id);
-        username = builder.username;
-        familyName = builder.familyName;
-        givenName = builder.givenName;
-    }
-
-    public void validateCustomer() {
-        if (isBlank(username) || isBlank(familyName) || isBlank(givenName)) {
-            throw new CustomerDomainException("Customer username, family name, and given name are required");
-        }
-    }
-
-    public void initializeCustomer() {
-        setId(new CustomerId(UUID.randomUUID()));
-    }
+    private String familyName;
+    private String givenName;
+    private Email email;
+    private PhoneNumber phoneNumber;
+    private LoyaltyTier loyaltyTier;
+    private CustomerStatus status;
 
     public String getUsername() {
         return username;
@@ -40,8 +28,85 @@ public class Customer extends AggregateRoot<CustomerId> {
         return givenName;
     }
 
-    private boolean isBlank(String value) {
+    public Email getEmail() {
+        return email;
+    }
+
+    public PhoneNumber getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public LoyaltyTier getLoyaltyTier() {
+        return loyaltyTier;
+    }
+
+    public CustomerStatus getStatus() {
+        return status;
+    }
+
+    public void validateCustomer(){
+        validateInitialCustomer();
+        validateUsername(username);
+        validateEmail(email);
+    }
+
+    private void validateEmail(Email email) {
+        if (email == null || isBlank(email.value())){
+            throw new CustomerDomainException("Email is not valid");
+        }
+    }
+
+    private void validateUsername(String username) {
+        if (isBlank(username)) {
+            throw new CustomerDomainException("Username is required");
+        }
+    }
+
+    private void validateInitialCustomer() {
+        if(status != null || super.getId() != null){
+            throw new CustomerDomainException("Customer already exists");
+        }
+    }
+
+    private static boolean isBlank(String value) {
         return value == null || value.isBlank();
+    }
+
+    public void initiateCustomer(){
+        setId(new CustomerId(UUID.randomUUID()));
+        status = CustomerStatus.ACTIVE;
+        if(loyaltyTier == null){
+            loyaltyTier = LoyaltyTier.BRONZE;
+        }
+    }
+
+    public void updateCustomer(String familyName, String givenName, Email email, PhoneNumber phoneNumber){
+        if(status != CustomerStatus.ACTIVE){
+            throw new CustomerDomainException("Customer can not be updated");
+        }
+        validateEmail(email);
+        this.familyName = familyName;
+        this.givenName = givenName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void deactivateCustomer(){
+        if(status != CustomerStatus.ACTIVE){
+            throw new CustomerDomainException("Customer is already deactivated");
+        }
+        status = CustomerStatus.INACTIVE;
+    }
+
+    private Customer(Builder builder) {
+        super.setId(builder.id);
+        username = builder.username;
+        familyName = builder.familyName;
+        givenName = builder.givenName;
+        email = builder.email;
+        phoneNumber = builder.phoneNumber;
+        loyaltyTier = builder.loyaltyTier;
+        status = builder.status;
     }
 
     public static Builder builder() {
@@ -53,6 +118,10 @@ public class Customer extends AggregateRoot<CustomerId> {
         private String username;
         private String familyName;
         private String givenName;
+        private Email email;
+        private PhoneNumber phoneNumber;
+        private LoyaltyTier loyaltyTier;
+        private CustomerStatus status;
 
         private Builder() {
         }
@@ -77,8 +146,29 @@ public class Customer extends AggregateRoot<CustomerId> {
             return this;
         }
 
+        public Builder email(Email val) {
+            email = val;
+            return this;
+        }
+
+        public Builder phoneNumber(PhoneNumber val) {
+            phoneNumber = val;
+            return this;
+        }
+
+        public Builder loyaltyTier(LoyaltyTier val) {
+            loyaltyTier = val;
+            return this;
+        }
+
+        public Builder status(CustomerStatus val) {
+            status = val;
+            return this;
+        }
+
         public Customer build() {
             return new Customer(this);
         }
     }
 }
+

@@ -8,6 +8,10 @@ import com.example.business.persistence.repository.BusinessJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 @Repository
 @RequiredArgsConstructor
 public class BusinessRepositoryAdapter implements BusinessRepository {
@@ -16,9 +20,14 @@ public class BusinessRepositoryAdapter implements BusinessRepository {
     private final BusinessPersistenceMapper businessPersistenceMapper;
 
     @Override
-    public Business saveBusiness(Business business) {
-        BusinessEntity businessEntity = businessPersistenceMapper.businessToBusinessEntity(business);
-        BusinessEntity savedBusinessEntity = businessJpaRepository.save(businessEntity);
-        return businessPersistenceMapper.businessEntityToBusiness(savedBusinessEntity);
+    public Optional<Business> findBusinessInformation(Business business) {
+        List<UUID> businessProducts = businessPersistenceMapper.businessToBusinessProducts(business);
+
+        List<BusinessEntity> businessEntities = businessJpaRepository.findByBusinessIdAndProductIdIn(
+                business.getId().value(),
+                businessProducts
+        );
+
+        return Optional.of(businessPersistenceMapper.businessEntityToBusiness(businessEntities));
     }
 }

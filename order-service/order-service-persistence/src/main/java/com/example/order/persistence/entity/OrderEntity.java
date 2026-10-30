@@ -1,6 +1,6 @@
 package com.example.order.persistence.entity;
 
-import com.example.valueobject.OrderStatus;
+import com.example.domain.valueobject.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,7 +33,7 @@ public class OrderEntity {
 
     private UUID trackingId;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     private String failureMessages;

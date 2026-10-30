@@ -1,9 +1,9 @@
 package com.example.order.domain.entity;
 
-import com.example.entity.BaseEntity;
-import com.example.valueobject.Money;
-import com.example.valueobject.OrderId;
-import com.example.valueobject.OrderItemId;
+import com.example.domain.entity.BaseEntity;
+import com.example.domain.valueobject.Money;
+import com.example.domain.valueobject.OrderId;
+import com.example.domain.valueobject.OrderItemId;
 
 public class OrderItem extends BaseEntity<OrderItemId> {
     private OrderId orderId;
@@ -16,7 +16,6 @@ public class OrderItem extends BaseEntity<OrderItemId> {
 
     private final Money subTotal;
 
-
     boolean isPriceValid() {
         boolean isGreaterThanZero = price.isGreaterThanZero();
         boolean isPriceConfirmed = price.equals(product.getPrice());
@@ -28,12 +27,6 @@ public class OrderItem extends BaseEntity<OrderItemId> {
         this.orderId = orderId;
         super.setId(orderItemId);
     }
-
-
-
-
-
-
 
     public OrderId getOrderId() {
         return orderId;
@@ -67,9 +60,6 @@ public class OrderItem extends BaseEntity<OrderItemId> {
     public static Builder builder() {
         return new Builder();
     }
-
-
-
 
     public static final class Builder {
         private OrderItemId id;

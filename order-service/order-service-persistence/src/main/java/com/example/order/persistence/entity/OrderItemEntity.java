@@ -28,5 +28,4 @@ public class OrderItemEntity {
     private Integer quantity;
     private BigDecimal price;
     private BigDecimal subTotal;
-
 }

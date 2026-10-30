@@ -1,60 +1,86 @@
 package com.example.business.domain.entity;
 
-import com.example.business.domain.exception.BusinessDomainException;
-import com.example.entity.AggregateRoot;
-import com.example.valueobject.BusinessId;
-import com.example.valueobject.ProductId;
+import com.example.domain.valueobject.OrderApprovalId;
+import com.example.domain.valueobject.OrderApprovalStatus;
+import com.example.domain.entity.AggregateRoot;
+import com.example.domain.valueobject.BusinessId;
+import com.example.domain.valueobject.Money;
+import com.example.domain.valueobject.OrderStatus;
 
 import java.util.List;
 import java.util.UUID;
 
 public class Business extends AggregateRoot<BusinessId> {
+    private OrderApproval orderApproval;
     private final boolean active;
-    private final List<Product> products;
+    private final OrderDetail orderDetail;
 
     private Business(Builder builder) {
-        setId(builder.id);
+        super.setId(builder.id);
+        orderApproval = builder.orderApproval;
         active = builder.active;
-        products = builder.products;
-    }
-
-    public void validateBusiness() {
-        if (products == null || products.isEmpty()) {
-            throw new BusinessDomainException("Business must contain at least one product");
-        }
-        for (Product product : products) {
-            if (product.getName() == null || product.getName().isBlank()) {
-                throw new BusinessDomainException("Product name is required");
-            }
-            if (product.getPrice() == null || !product.getPrice().isGreaterThanZero()) {
-                throw new BusinessDomainException("Product price must be greater than zero");
-            }
-        }
-    }
-
-    public void initializeBusiness() {
-        setId(new BusinessId(UUID.randomUUID()));
-        for (Product product : products) {
-            product.setId(new ProductId(UUID.randomUUID()));
-        }
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public List<Product> getProducts() {
-        return products;
+        orderDetail = builder.orderDetail;
     }
 
     public static Builder builder() {
         return new Builder();
     }
 
+    public void validateOrder(List<String> failureMessages) {
+        validateOrderStatus(failureMessages);
+        validateProductAvailability(failureMessages);
+        validateOrderTotal(failureMessages);
+    }
+
+    private void validateOrderStatus(List<String> failureMessages) {
+        if (orderDetail.getOrderStatus() != OrderStatus.PAID) {
+            failureMessages.add("Order is not paid");
+        }
+    }
+
+    private void validateProductAvailability(List<String> failureMessages) {
+        orderDetail.getProducts().stream()
+                .filter(product -> !product.isAvailable())
+                .forEach(product -> failureMessages.add(
+                        "Product with id " + product.getId().value() + " is not available"));
+    }
+
+    private void validateOrderTotal(List<String> failureMessages) {
+        Money productsTotal = orderDetail.getProducts().stream()
+                .map(product -> product.getPrice().multiply(product.getQuantity()))
+                .reduce(Money.ZERO, Money::add);
+
+        if (!orderDetail.getTotalAmount().equals(productsTotal)) {
+            failureMessages.add("Order total amount does not match product total");
+        }
+    }
+
+    public void constructOrderApproval(OrderApprovalStatus status) {
+        orderApproval = OrderApproval.builder()
+                .id(new OrderApprovalId(UUID.randomUUID()))
+                .businessId(getId())
+                .orderId(orderDetail.getId())
+                .approvalStatus(status)
+                .build();
+    }
+
+    public OrderApproval getOrderApproval() {
+        return orderApproval;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public OrderDetail getOrderDetail() {
+        return orderDetail;
+    }
+
     public static final class Builder {
         private BusinessId id;
+        private OrderApproval orderApproval;
         private boolean active;
-        private List<Product> products;
+        private OrderDetail orderDetail;
 
         private Builder() {
         }
@@ -64,13 +90,18 @@ public class Business extends AggregateRoot<BusinessId> {
             return this;
         }
 
+        public Builder orderApproval(OrderApproval val) {
+            orderApproval = val;
+            return this;
+        }
+
         public Builder active(boolean val) {
             active = val;
             return this;
         }
 
-        public Builder products(List<Product> val) {
-            products = val;
+        public Builder orderDetail(OrderDetail val) {
+            orderDetail = val;
             return this;
         }
 

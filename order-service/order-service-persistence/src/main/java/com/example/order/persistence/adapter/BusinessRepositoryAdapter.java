@@ -21,6 +21,7 @@ public class BusinessRepositoryAdapter implements BusinessRepository {
 
     @Override
     public Optional<Business> findBusiness(Business business) {
+
         List<UUID> businessProducts = businessPersistenceMapper.businessToBusinessProducts(business);
 
         List<BusinessEntity> businessEntities = businessJpaRepository.findByBusinessIdAndProductIdIn(
@@ -28,11 +29,6 @@ public class BusinessRepositoryAdapter implements BusinessRepository {
                 businessProducts
         );
 
-        if (businessEntities.isEmpty()) {
-            return Optional.empty();
-        }
-
         return Optional.of(businessPersistenceMapper.businessEntityToBusiness(businessEntities));
     }
-
 }

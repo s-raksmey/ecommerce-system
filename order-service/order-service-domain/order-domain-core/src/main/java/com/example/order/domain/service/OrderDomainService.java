@@ -9,6 +9,7 @@ import com.example.order.domain.event.OrderPaidEvent;
 import java.util.List;
 
 public interface OrderDomainService {
+
     OrderCreatedEvent validateAndInitiateOrder(Order order, Business business);
 
     OrderPaidEvent payOrder(Order order);

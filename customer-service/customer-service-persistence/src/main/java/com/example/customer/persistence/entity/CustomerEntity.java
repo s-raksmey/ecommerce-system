@@ -1,8 +1,8 @@
 package com.example.customer.persistence.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.example.domain.valueobject.CustomerStatus;
+import com.example.domain.valueobject.LoyaltyTier;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,9 +15,25 @@ import java.util.UUID;
 @Entity
 @Table(name = "customers")
 public class CustomerEntity {
+
     @Id
     private UUID id;
+
+    @Column(unique = true)
     private String username;
+
     private String familyName;
+
     private String givenName;
+
+    @Column(unique = true)
+    private String email;
+
+    private String phoneNumber;
+
+    @Enumerated(EnumType.STRING)
+    private LoyaltyTier loyaltyTier;
+
+    @Enumerated(EnumType.STRING)
+    private CustomerStatus status;
 }

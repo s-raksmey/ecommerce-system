@@ -1,17 +1,25 @@
 package com.example.business.domain.entity;
 
-import com.example.entity.BaseEntity;
-import com.example.valueobject.Money;
-import com.example.valueobject.ProductId;
+import com.example.domain.entity.BaseEntity;
+import com.example.domain.valueobject.Money;
+import com.example.domain.valueobject.ProductId;
 
 public class Product extends BaseEntity<ProductId> {
-    private final String name;
-    private final Money price;
+    private String name;
+    private Money price;
+    private final int quantity;
+    private boolean available;
 
     private Product(Builder builder) {
-        setId(builder.id);
+        super.setId(builder.id);
         name = builder.name;
         price = builder.price;
+        quantity = builder.quantity;
+        available = builder.available;
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public String getName() {
@@ -22,14 +30,26 @@ public class Product extends BaseEntity<ProductId> {
         return price;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void updateWithConfirmedNamePriceAndAvailability(String name, Money price, boolean available) {
+        this.name = name;
+        this.price = price;
+        this.available = available;
     }
 
     public static final class Builder {
         private ProductId id;
         private String name;
         private Money price;
+        private int quantity;
+        private boolean available;
 
         private Builder() {
         }
@@ -46,6 +66,16 @@ public class Product extends BaseEntity<ProductId> {
 
         public Builder price(Money val) {
             price = val;
+            return this;
+        }
+
+        public Builder quantity(int val) {
+            quantity = val;
+            return this;
+        }
+
+        public Builder available(boolean val) {
+            available = val;
             return this;
         }
 

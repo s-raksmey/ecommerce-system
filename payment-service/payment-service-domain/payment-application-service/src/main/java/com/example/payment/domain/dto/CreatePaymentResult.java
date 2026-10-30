@@ -1,6 +1,6 @@
 package com.example.payment.domain.dto;
 
-import com.example.valueobject.PaymentStatus;
+import com.example.domain.valueobject.PaymentStatus;
 
 import java.util.UUID;
 

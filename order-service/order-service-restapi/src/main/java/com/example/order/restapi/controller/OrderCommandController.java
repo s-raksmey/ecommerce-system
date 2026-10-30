@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class OrderCommandController {
     public OrderCreateResponse createOrder(
             @Valid @RequestBody OrderCreateRequest orderCreateRequest
     ) {
+
         CreateOrderCommand createOrderCommand = orderWebMapper
                 .orderCreateRequestToCreateOrderCommand(orderCreateRequest);
 

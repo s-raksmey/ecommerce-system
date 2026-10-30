@@ -1,28 +1,34 @@
 package com.example.business.persistence.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@IdClass(BusinessIdEntity.class)
 @Entity
 @Table(name = "businesses")
 public class BusinessEntity {
     @Id
-    private UUID id;
-    private Boolean active;
+    private UUID businessId;
 
-    @OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductEntity> products = new ArrayList<>();
+    @Id
+    private UUID productId;
+
+    private String businessName;
+    private Boolean businessActive;
+
+    private String productName;
+    private BigDecimal productPrice;
+    private Boolean productAvailable;
+
 }

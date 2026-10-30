@@ -3,7 +3,9 @@ package com.example.customer.domain.usecase;
 import com.example.customer.domain.dto.CreateCustomerCommand;
 import com.example.customer.domain.dto.CreateCustomerResult;
 import com.example.customer.domain.entity.Customer;
+import com.example.customer.domain.event.CustomerCreatedEvent;
 import com.example.customer.domain.exception.CustomerDomainException;
+import com.example.customer.domain.mapper.CustomerDomainMapper;
 import com.example.customer.domain.port.output.CustomerRepository;
 import com.example.customer.domain.service.CustomerDomainService;
 import lombok.RequiredArgsConstructor;
@@ -18,22 +20,27 @@ public class CreateCustomerUseCase {
 
     private final CustomerDomainService customerDomainService;
     private final CustomerRepository customerRepository;
+    private final CustomerDomainMapper customerDomainMapper;
 
     @Transactional
     public CreateCustomerResult execute(CreateCustomerCommand createCustomerCommand) {
-        log.info("executing CreateCustomerUseCase: {}", createCustomerCommand);
+        log.info("Execute CreateCustomerUseCase : {}", createCustomerCommand);
 
-        Customer customer = Customer.builder()
-                .username(createCustomerCommand.username())
-                .familyName(createCustomerCommand.familyName())
-                .givenName(createCustomerCommand.givenName())
-                .build();
+        if (customerRepository.existsByUsername(createCustomerCommand.username())) {
+            throw new CustomerDomainException("Username already exists");
+        }
 
-        customerDomainService.validateAndInitializeCustomer(customer);
+        if (customerRepository.existsByEmail(createCustomerCommand.email())) {
+            throw new CustomerDomainException("Email already exists");
+        }
 
-        Customer savedCustomer = customerRepository.saveCustomer(customer);
+        Customer customer = customerDomainMapper.createCustomerCommandToCustomer(createCustomerCommand);
+        CustomerCreatedEvent customerCreatedEvent = customerDomainService.validateAndInitiateCustomer(customer);
+        Customer savedCustomer = customerRepository.save(customer);
+
         if (savedCustomer == null) {
-            throw new CustomerDomainException("Could not save customer into database");
+            log.error("Could not save customer with id: {}", createCustomerCommand.customerId());
+            throw new CustomerDomainException("Could not save customer with id " + createCustomerCommand.customerId());
         }
 
         return new CreateCustomerResult(savedCustomer.getId().value());

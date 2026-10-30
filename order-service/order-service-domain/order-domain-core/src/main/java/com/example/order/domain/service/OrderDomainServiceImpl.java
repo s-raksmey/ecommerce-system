@@ -16,20 +16,17 @@ public class OrderDomainServiceImpl implements OrderDomainService {
 
     @Override
     public OrderCreatedEvent validateAndInitiateOrder(Order order, Business business) {
+
         if (!business.isActive()) {
-            throw new OrderDomainException(
-                    "Business with ID: " + business.getId().value() + " is not currently active"
-            );
+            throw new OrderDomainException("Business wit ID: " +  business.getId() + "is not currently active");
         }
 
         order.getItems().forEach(orderItem -> {
             business.getProducts().forEach(businessProduct -> {
                 Product currentProduct = orderItem.getProduct();
                 if (businessProduct.equals(currentProduct)) {
-                    currentProduct.updateConfirmedNameAndPrice(
-                            businessProduct.getName(),
-                            businessProduct.getPrice()
-                    );
+                    currentProduct.updateConfirmedNameAndPrice(businessProduct.getName(),
+                            businessProduct.getPrice());
                 }
             });
         });
@@ -61,5 +58,4 @@ public class OrderDomainServiceImpl implements OrderDomainService {
     public void cancelOrder(Order order, List<String> failureMessages) {
         order.cancel(failureMessages);
     }
-
 }

@@ -1,7 +1,7 @@
 package com.example.order.domain.entity;
 
-import com.example.entity.AggregateRoot;
-import com.example.valueobject.BusinessId;
+import com.example.domain.entity.AggregateRoot;
+import com.example.domain.valueobject.BusinessId;
 
 import java.util.List;
 
@@ -26,7 +26,6 @@ public class Business extends AggregateRoot<BusinessId> {
     public static Builder builder() {
         return new Builder();
     }
-
 
     public static final class Builder {
         private BusinessId id;

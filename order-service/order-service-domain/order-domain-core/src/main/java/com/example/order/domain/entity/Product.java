@@ -1,8 +1,8 @@
 package com.example.order.domain.entity;
 
-import com.example.entity.BaseEntity;
-import com.example.valueobject.Money;
-import com.example.valueobject.ProductId;
+import com.example.domain.entity.BaseEntity;
+import com.example.domain.valueobject.Money;
+import com.example.domain.valueobject.ProductId;
 
 public class Product extends BaseEntity<ProductId> {
     private String name;

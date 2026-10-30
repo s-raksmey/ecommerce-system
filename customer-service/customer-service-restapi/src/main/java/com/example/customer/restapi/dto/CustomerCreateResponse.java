@@ -8,4 +8,5 @@ import java.util.UUID;
 public record CustomerCreateResponse(
         UUID customerId
 ) {
+
 }

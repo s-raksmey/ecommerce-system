@@ -1,6 +1,6 @@
 package com.example.order.domain.event;
 
-import com.example.event.DomainEvent;
+import com.example.domain.event.DomainEvent;
 import com.example.order.domain.entity.Order;
 
 import java.time.ZonedDateTime;

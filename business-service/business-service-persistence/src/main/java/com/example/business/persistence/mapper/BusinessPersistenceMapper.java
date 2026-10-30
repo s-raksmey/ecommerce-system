@@ -1,52 +1,40 @@
 package com.example.business.persistence.mapper;
 
 import com.example.business.domain.entity.Business;
+import com.example.business.domain.entity.OrderDetail;
 import com.example.business.domain.entity.Product;
 import com.example.business.persistence.entity.BusinessEntity;
-import com.example.business.persistence.entity.ProductEntity;
-import com.example.valueobject.BusinessId;
-import com.example.valueobject.Money;
-import com.example.valueobject.ProductId;
-import org.springframework.stereotype.Component;
+import com.example.domain.valueobject.BusinessId;
+import com.example.domain.valueobject.Money;
+import com.example.domain.valueobject.ProductId;
+import com.example.persistence.business.exception.BusinessPersistenceException;
+import org.mapstruct.Mapper;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-@Component
-public class BusinessPersistenceMapper {
+@Mapper(componentModel = "spring")
+public interface BusinessPersistenceMapper {
 
-    public BusinessEntity businessToBusinessEntity(Business business) {
-        BusinessEntity businessEntity = new BusinessEntity();
-        businessEntity.setId(business.getId().value());
-        businessEntity.setActive(business.isActive());
-
-        List<ProductEntity> productEntities = business.getProducts().stream()
-                .map(product -> {
-                    ProductEntity productEntity = new ProductEntity();
-                    productEntity.setId(product.getId().value());
-                    productEntity.setName(product.getName());
-                    productEntity.setPrice(product.getPrice().getAmount());
-                    productEntity.setBusiness(businessEntity);
-                    return productEntity;
-                })
-                .toList();
-        businessEntity.setProducts(new ArrayList<>(productEntities));
-        return businessEntity;
+    default List<UUID> businessToBusinessProducts(Business business) {
+        return business.getOrderDetail().getProducts().stream().map(product -> product.getId().value()).toList();
     }
 
-    public Business businessEntityToBusiness(BusinessEntity businessEntity) {
-        List<Product> products = businessEntity.getProducts().stream()
-                .map(productEntity -> Product.builder()
-                        .id(new ProductId(productEntity.getId()))
-                        .name(productEntity.getName())
-                        .price(new Money(productEntity.getPrice()))
-                        .build())
-                .toList();
+    default Business businessEntityToBusiness(List<BusinessEntity> businessEntities) {
+        BusinessEntity businessEntity = businessEntities.stream().findFirst().orElseThrow(() -> new BusinessPersistenceException("Business could not be found"));
+
+        List<Product> products = businessEntities.stream().map(entity -> Product.builder()
+                .id(new ProductId(entity.getProductId()))
+                .name(entity.getProductName())
+                .price(new Money(entity.getProductPrice()))
+                .available(entity.getProductAvailable())
+                .build()).toList();
 
         return Business.builder()
-                .id(new BusinessId(businessEntity.getId()))
-                .active(Boolean.TRUE.equals(businessEntity.getActive()))
-                .products(products)
+                .id(new BusinessId(businessEntity.getBusinessId()))
+                .active(businessEntity.getBusinessActive())
+                .orderDetail(OrderDetail.builder().products(products).build())
                 .build();
     }
+
 }

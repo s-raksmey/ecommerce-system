@@ -1,12 +1,12 @@
 package com.example.order.persistence.mapper;
 
+import com.example.domain.valueobject.BusinessId;
+import com.example.domain.valueobject.Money;
+import com.example.domain.valueobject.ProductId;
 import com.example.order.domain.entity.Business;
 import com.example.order.domain.entity.Product;
 import com.example.order.persistence.entity.BusinessEntity;
 import com.example.persistence.business.exception.BusinessPersistenceException;
-import com.example.valueobject.BusinessId;
-import com.example.valueobject.Money;
-import com.example.valueobject.ProductId;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -37,7 +37,7 @@ public interface BusinessPersistenceMapper {
         return Business.builder()
                 .id(new BusinessId(businessEntity.getBusinessId()))
                 .products(businessProducts)
-                .active(Boolean.TRUE.equals(businessEntity.getBusinessActive()))
+                .active(businessEntity.getBusinessActive())
                 .build();
     }
 

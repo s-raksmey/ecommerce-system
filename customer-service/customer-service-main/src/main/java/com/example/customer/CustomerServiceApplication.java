@@ -5,12 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@EntityScan(basePackages = {
-        "com.example.customer.persistence"
-})
-@EnableJpaRepositories(basePackages = {
-        "com.example.customer.persistence"
-})
+@EntityScan(basePackages = {"com.example.customer.persistence"})
+@EnableJpaRepositories(basePackages = "com.example.customer.persistence")
 @SpringBootApplication
 public class CustomerServiceApplication {
     public static void main(String[] args) {
