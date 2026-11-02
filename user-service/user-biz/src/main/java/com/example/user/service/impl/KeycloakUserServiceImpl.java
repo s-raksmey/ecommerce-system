@@ -15,9 +15,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class KeycloakUserServiceImpl implements KeycloakUserService {
-
     private final Keycloak keycloak;
-
     @Override
     public void createKeycloakUser(UserRepresentation userRepresentation) {
         try (Response response = keycloak.realm(KeycloakAdminClientConfig.REALM_NAME)
@@ -31,7 +29,6 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
             }
         }
     }
-
     @Override
     public UserRepresentation getKeycloakUserByUsername(String username) {
         return keycloak.realm(KeycloakAdminClientConfig.REALM_NAME)
@@ -45,4 +42,49 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
                 ));
     }
 
+    @Override
+    public void updateKeycloakUser(String id, UserRepresentation userRepresentation) {
+        try {
+            keycloak.realm(KeycloakAdminClientConfig.REALM_NAME)
+                .users()
+                .get(id)
+                .update(userRepresentation);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new KeycloakException(
+                    HttpStatus.BAD_GATEWAY,
+                    "Update user in Keycloak failed"
+            );
+        }
+    }
+
+    @Override
+    public UserRepresentation getKeycloakUserById(String id) {
+        try {
+            return keycloak.realm(KeycloakAdminClientConfig.REALM_NAME)
+                    .users()
+                    .get(id)
+                    .toRepresentation();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new KeycloakException(
+                    HttpStatus.NOT_FOUND,
+                    "User in Keycloak not found"
+            );
+        }
+    }
+
+    @Override
+    public void deleteKeycloakUser(String id) {
+        try (Response response = keycloak.realm(KeycloakAdminClientConfig.REALM_NAME)
+                .users()
+                .delete(id)) {
+            if (response.getStatus() != HttpStatus.NO_CONTENT.value()) {
+                throw new KeycloakException(
+                        HttpStatus.valueOf(response.getStatus()),
+                        "Delete user in keycloak failed with status " + response.getStatus()
+                );
+            }
+        }
+    }
 }
