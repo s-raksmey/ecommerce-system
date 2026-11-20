@@ -1,9 +1,7 @@
 package com.example.customer.domain.dto;
 
-import java.util.UUID;
-
 public record CreateCustomerCommand(
-        UUID customerId,
+        String userId,
         String username,
         String familyName,
         String givenName,

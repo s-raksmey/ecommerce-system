@@ -1,5 +1,6 @@
 package com.example.customer.persistence.mapper;
 
+import com.example.customer.domain.dto.CustomerResult;
 import com.example.customer.domain.entity.Customer;
 import com.example.customer.persistence.entity.CustomerEntity;
 import com.example.domain.valueobject.PhoneNumber;
@@ -24,5 +25,7 @@ public interface CustomerPersistenceMapper {
     default PhoneNumber toPhoneNumber(String phoneNumber) {
         return phoneNumber == null ? null : new PhoneNumber(phoneNumber);
     }
+
+    CustomerResult toCustomerResult(CustomerEntity customerEntity);
 
 }

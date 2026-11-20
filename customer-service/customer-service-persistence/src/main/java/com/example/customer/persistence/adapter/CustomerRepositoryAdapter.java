@@ -1,5 +1,7 @@
 package com.example.customer.persistence.adapter;
 
+import com.example.core.PageResponse;
+import com.example.customer.domain.dto.CustomerResult;
 import com.example.customer.domain.entity.Customer;
 import com.example.customer.domain.port.output.CustomerRepository;
 import com.example.customer.persistence.entity.CustomerEntity;
@@ -7,6 +9,11 @@ import com.example.customer.persistence.mapper.CustomerPersistenceMapper;
 import com.example.customer.persistence.repository.CustomerJpaRepository;
 import com.example.domain.valueobject.CustomerId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -17,6 +24,23 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
     private final CustomerJpaRepository customerJpaRepository;
     private final CustomerPersistenceMapper customerPersistenceMapper;
 
+    @Cacheable(cacheNames = "customer", key = "'page:' + #p0 + ':size:' + #p1")
+    @Override
+    public PageResponse<CustomerResult> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CustomerResult> result = customerJpaRepository.findAll(pageable)
+                .map(customerPersistenceMapper::toCustomerResult);
+        return PageResponse.<CustomerResult>builder()
+                .items(result.getContent())
+                .page(result.getNumber())
+                .size(result.getSize())
+                .totalPages(result.getTotalPages())
+                .totalElements(result.getTotalElements())
+                .hasNext(result.hasNext())
+                .build();
+    }
+
+    @CacheEvict(cacheNames = "customer", allEntries = true)
     @Override
     public Customer save(Customer customer) {
         CustomerEntity savedEntity = customerJpaRepository.save(

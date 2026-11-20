@@ -7,6 +7,8 @@ import lombok.Builder;
 @Builder
 public record CustomerCreateRequest(
         @NotBlank
+        String userId,
+        @NotBlank
         String username,
         String familyName,
         String givenName,

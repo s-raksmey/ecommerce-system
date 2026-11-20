@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class CustomerGlobalExceptionHandler extends GlobalExceptionHandler {
 
     @ExceptionHandler(CustomerDomainException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public RestApiErrorResponse<?> handleCustomerDomainException(CustomerDomainException e) {
         return RestApiErrorResponse.builder()
-                .code(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .code(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
                 .message(e.getMessage())
                 .build();
     }

@@ -2,10 +2,14 @@ package com.example.user.mapper;
 
 import com.example.user.dto.UserCreateRequest;
 import com.example.user.dto.UserResponse;
+import com.example.user.dto.UserUpdateRequest;
 import com.example.user.entity.UserEntity;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -23,6 +27,9 @@ public interface UserMapper {
     }
 
     UserEntity toEntity(UserCreateRequest userCreateRequest);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntity(UserUpdateRequest request, @MappingTarget UserEntity entity);
 
     UserResponse toResponse(UserEntity userEntity);
 

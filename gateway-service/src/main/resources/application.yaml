@@ -22,6 +22,18 @@ spring:
           default-filters:
             - SaveSession
             - TokenRelay=
+
+    sentinel:
+      transport:
+        dashboard: localhost:8082
+        port: 8719
+      eager: true
+      web-context-unify: false
+      scg:
+        fallback:
+          mode: response
+          response-status: 429
+          response-body: '{"error":"Too many requests at gateway"}'
     nacos:
       discovery:
         namespace: ${spring.profiles.active}
