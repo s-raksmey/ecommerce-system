@@ -1,7 +1,6 @@
 package com.example.customer.domain.usecase;
 
 import com.example.customer.client.dto.UserResponse;
-import com.example.customer.client.exception.UserServiceUnavailableException;
 import com.example.customer.client.feign.UserFeignClient;
 import com.example.customer.domain.dto.CreateCustomerCommand;
 import com.example.customer.domain.dto.CreateCustomerResult;
@@ -36,8 +35,6 @@ public class CreateCustomerUseCase {
             log.info("User found: {}", userResponse);
         } catch (FeignException.NotFound e) {
             throw new CustomerDomainException("User not found");
-        } catch (UserServiceUnavailableException e) {
-            throw new CustomerDomainException(e.getMessage());
         }
 
         if (customerRepository.existsByUsername(createCustomerCommand.username())) {

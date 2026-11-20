@@ -1,17 +1,33 @@
 package com.example.customer.client.fallback;
 
-import com.example.customer.client.dto.UserResponse;
 import com.example.customer.client.exception.UserServiceUnavailableException;
 import com.example.customer.client.feign.UserFeignClient;
+import feign.FeignException;
+import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserFeignClientFallback implements UserFeignClient {
+public class UserFeignClientFallback implements FallbackFactory<UserFeignClient> {
 
     @Override
-    public UserResponse getById(String id) {
-        throw new UserServiceUnavailableException(
-                "user-service is unavailable while loading user " + id
-        );
+    public UserFeignClient create(Throwable cause) {
+        return id -> {
+            Throwable failure = rootCause(cause);
+            if (failure instanceof FeignException.NotFound notFound) {
+                throw notFound;
+            }
+            throw new UserServiceUnavailableException(
+                    "user-service is unavailable while loading user " + id,
+                    failure
+            );
+        };
+    }
+
+    private Throwable rootCause(Throwable cause) {
+        Throwable current = cause;
+        while (current.getCause() != null && current.getCause() != current) {
+            current = current.getCause();
+        }
+        return current;
     }
 }

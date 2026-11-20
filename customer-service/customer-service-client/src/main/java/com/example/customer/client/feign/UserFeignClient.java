@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(
         name = "user-service",
         path = "/api/users",
-        fallback = UserFeignClientFallback.class
+        fallbackFactory = UserFeignClientFallback.class
 )
 public interface UserFeignClient {
     @GetMapping("/{id}")
