@@ -1,6 +1,14 @@
 feign:
   sentinel:
-    enabled: true
+    default-rule: default
+    enable-refresh-rules: true
+    rules:
+      user-service:
+        - grade: 2
+          count: 5
+          time-window: 10
+          stat-interval-ms: 10000
+          min-request-amount: 5
 server:
   port: 8551
   forward-headers-strategy: framework
@@ -18,6 +26,18 @@ spring:
     import:
       - nacos:${spring.application.name}.${spring.cloud.nacos.config.file-extension}
   cloud:
+    circuitbreaker:
+      sentinel:
+        enabled: true
+    openfeign:
+      circuitbreaker:
+        enabled: true
+      client:
+        config:
+          user-service:
+            connect-timeout: 2000
+            read-timeout: 3000
+            logger-level: basic
     sentinel:
       transport:
         dashboard: localhost:8081
