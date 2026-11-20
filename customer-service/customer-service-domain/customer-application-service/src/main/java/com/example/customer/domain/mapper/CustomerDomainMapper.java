@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomerDomainMapper {
 
-    // id and status are not set here: the domain sets them in initiateCustomer()
     public Customer createCustomerCommandToCustomer(CreateCustomerCommand createCustomerCommand) {
         return Customer.builder()
                 .username(createCustomerCommand.username())

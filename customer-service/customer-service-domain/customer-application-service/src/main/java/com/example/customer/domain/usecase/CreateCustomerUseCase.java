@@ -22,12 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CreateCustomerUseCase {
 
-    private final CustomerDomainService customerDomainService; // business rules (from customer-domain-core)
+    private final CustomerDomainService customerDomainService;
     private final CustomerRepository customerRepository;
     private final CustomerDomainMapper customerDomainMapper;
     private final UserFeignClient userFeignClient;
 
-    @Transactional // everything below runs in one DB transaction: if anything fails, nothing is saved
+    @Transactional
     public CreateCustomerResult execute(CreateCustomerCommand createCustomerCommand) {
         log.info("Execute CreateCustomerUseCase : {}", createCustomerCommand);
 
