@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserFeignClientFallbackFactory implements FallbackFactory<UserFeignClient> {
+public class UserFeignClientFallback implements FallbackFactory<UserFeignClient> {
 
     @Override
     public UserFeignClient create(Throwable cause) {

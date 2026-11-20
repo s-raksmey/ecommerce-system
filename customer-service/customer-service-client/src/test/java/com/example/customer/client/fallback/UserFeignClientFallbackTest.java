@@ -12,9 +12,9 @@ import java.util.concurrent.CompletionException;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class UserFeignClientFallbackFactoryTest {
+class UserFeignClientFallbackTest {
 
-    private final UserFeignClientFallbackFactory factory = new UserFeignClientFallbackFactory();
+    private final UserFeignClientFallback fallback = new UserFeignClientFallback();
 
     @Test
     void preservesNotFoundResponse() {
@@ -35,7 +35,7 @@ class UserFeignClientFallbackFactoryTest {
                         .build()
         );
 
-        assertThatThrownBy(() -> factory.create(new CompletionException(notFound)).getById("missing"))
+        assertThatThrownBy(() -> fallback.create(new CompletionException(notFound)).getById("missing"))
                 .isSameAs(notFound);
     }
 
@@ -43,7 +43,7 @@ class UserFeignClientFallbackFactoryTest {
     void reportsUnavailableServiceWithOriginalCause() {
         RuntimeException cause = new RuntimeException("connection refused");
 
-        assertThatThrownBy(() -> factory.create(cause).getById("user-1"))
+        assertThatThrownBy(() -> fallback.create(cause).getById("user-1"))
                 .isInstanceOf(UserServiceUnavailableException.class)
                 .hasMessage("user-service is unavailable while loading user user-1")
                 .hasCause(cause);
